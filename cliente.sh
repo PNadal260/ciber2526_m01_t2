@@ -20,6 +20,8 @@ IP_LOCAL=`ip -4 addr | grep "scope global" | awk '{print $2}' | cut -d "/" -f 1`
 # IP_LOCAL=`ip -4 addr | grep "scope global" | tr -s " " | cut -d " " -f 3 | cut -d "/" -f 1`
 # IP_LOCAL=`ip -4 addr | grep 'inet ' | grep -v '127.' | awk '{print $2}' | cut -d "/" -f ip -4 addr | grep 'inet ' | grep -v '127.' | awk '{print $2}' | cut -d "/" -f 11`
 
+echo "$IP_LOCAL" | md5sum | cut -d " " -f 1
+
 sleep 1
 echo "RECTP $VERSION_CURRENT $IP_LOCAL" | nc $IP_SERVER -q 0 $PORT
 
