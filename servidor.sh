@@ -1,6 +1,6 @@
 #/bin/bash
 
-VERSION_CURRENT="0.6"
+VERSION_CURRENT="0.8"
 
 PORT="9999"
 IP_CLIENT="localhost"
@@ -94,6 +94,22 @@ then
 fi
 
 FILE_NAME=`echo $DATA | cut -d " " -f 2`
+
+if [ "$FILE_NAME" == "" ]
+then
+	echo "Error 3: Nombre de archivo vaciío"
+	exit 3
+fi
+
+FILE_NAME_HASH=`echo $DATA | cut -d " " -f 3`
+
+FILE_NAME_HASH_TEST=`echo "$FILE_NAME" | md5sum | cut -d " " -f 1`
+
+if [ "$FILE_NAME_HASH" != "$FILE_NAME_HASH_TEST" ]
+then
+	echo "Error 3h: Hash del nombre de archivo erróneo"
+	exit 3
+fi
 
 echo "File Name: $FILE_NAME"
 

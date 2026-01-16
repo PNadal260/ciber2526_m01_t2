@@ -2,7 +2,7 @@
 
 AUDIO_FILE="audio.wav"
 
-VERSION_CURRENT="0.6"
+VERSION_CURRENT="0.8"
 
 PORT="9999"
 IP_SERVER="localhost"
@@ -20,10 +20,10 @@ IP_LOCAL=`ip -4 addr | grep "scope global" | awk '{print $2}' | cut -d "/" -f 1`
 # IP_LOCAL=`ip -4 addr | grep "scope global" | tr -s " " | cut -d " " -f 3 | cut -d "/" -f 1`
 # IP_LOCAL=`ip -4 addr | grep 'inet ' | grep -v '127.' | awk '{print $2}' | cut -d "/" -f ip -4 addr | grep 'inet ' | grep -v '127.' | awk '{print $2}' | cut -d "/" -f 11`
 
-echo "$IP_LOCAL" | md5sum | cut -d " " -f 1
+IP_LOCAL_HASH=`echo "$IP_LOCAL" | md5sum | cut -d " " -f 1`
 
 sleep 1
-echo "RECTP $VERSION_CURRENT $IP_LOCAL" | nc $IP_SERVER -q 0 $PORT
+echo "RECTP $VERSION_CURRENT $IP_LOCAL $IP_LOCAL_HASH" | nc $IP_SERVER -q 0 $PORT
 
 RESPONSE=`nc -l -p $PORT`
 
@@ -38,8 +38,10 @@ fi
 
 echo "6. SEND. Nombre de archivo"
 
+AUDIO_FILE_HASH=`echo "$AUDIO_FILE" | md5sum | cut -d " " -f 1`
+
 sleep 1
-echo "FILE_NAME $AUDIO_FILE" | nc $IP_SERVER -q 0 $PORT
+echo "FILE_NAME $AUDIO_FILE $AUDIO_FILE_HASH" | nc $IP_SERVER -q 0 $PORT
 
 echo "7. LISTEN. FILE_NAME_OK"
 
@@ -49,6 +51,7 @@ echo "10. TEST. FILE_NAME_OK"
 
 if [ "$RESPONSE" != "FILE_NAME_OK" ]
 then
+
 	echo "Error 2: Nombre de archivo incorrecto o mal formado"
 	exit 2
 fi
