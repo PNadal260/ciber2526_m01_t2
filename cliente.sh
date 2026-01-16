@@ -2,7 +2,7 @@
 
 AUDIO_FILE="audio.wav"
 
-VERSION_CURRENT="0.8"
+VERSION_CURRENT="0.9"
 
 PORT="9999"
 IP_SERVER="localhost"
@@ -65,7 +65,7 @@ echo "12. LISTEN"
 
 RESPONSE=`nc -l -p $PORT`
 
-echo "15. TEST AND END"
+echo "16. TEST AND END"
 
 if [ "$RESPONSE" != "FILE_DATA_OK" ]
 then
@@ -74,6 +74,12 @@ then
 	exit 3
 fi
 
+FILE_DATA_HASH=`md5sum $AUDIO_FILE | cut -d -f 1`
+echo "FILE_DATA_HASH $FILE_DATA_HASH" | nc $IP_SERVER -q 0 $PORT
+
+echo "18. LISTEN"
+
+RESPONSE=`nc -l -p $PORT`
 echo "Fin de comuniación"
 
 exit 0

@@ -1,6 +1,6 @@
 #/bin/bash
 
-VERSION_CURRENT="0.8"
+VERSION_CURRENT="0.9"
 
 PORT="9999"
 IP_CLIENT="localhost"
