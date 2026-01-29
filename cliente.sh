@@ -1,11 +1,23 @@
 #!/bin/bash
 
+if [ $# -lt 1 ]
+then
+	
+	echo "Error 255: No has introducido la ip del servidor"
+	echo "Sintaxis:"
+	echo -e "\t$0 IP_SERVER"
+	echo "Ejemplos de uso:"	
+	echo -e "\t$0 localhost"
+	echo -e "\t$0 192.168.225.204 "
+	exit 255
+fi
+
 AUDIO_FILE="audio.wav"
 
 VERSION_CURRENT="0.9"
 
 PORT="9999"
-IP_SERVER="localhost"
+IP_SERVER="$1"
 
 clear
 
@@ -25,7 +37,16 @@ IP_LOCAL_HASH=`echo "$IP_LOCAL" | md5sum | cut -d " " -f 1`
 sleep 1
 echo "RECTP $VERSION_CURRENT $IP_LOCAL $IP_LOCAL_HASH" | nc $IP_SERVER -q 0 $PORT
 
+if [ $? != "0" ]
+then
+	echo "Error 254: No ha sido posible conectar a $1"
+	exit 254
+fi
+
+echo "2. Listen. Header Response"
+
 RESPONSE=`nc -l -p $PORT`
+
 
 echo "5. TEST. Header Response"
 
@@ -50,6 +71,9 @@ RESPONSE=`nc -l -p $PORT`
 echo "10. TEST. FILE_NAME_OK"
 
 if [ "$RESPONSE" != "FILE_NAME_OK" ]
+
+
+
 then
 
 	echo "Error 2: Nombre de archivo incorrecto o mal formado"
@@ -74,12 +98,18 @@ then
 	exit 3
 fi
 
-FILE_DATA_HASH=`md5sum $AUDIO_FILE | cut -d -f 1`
+FILE_DATA_HASH=`md5sum $AUDIO_FILE | cut -d " "  -f 1`
 echo "FILE_DATA_HASH $FILE_DATA_HASH" | nc $IP_SERVER -q 0 $PORT
 
 echo "18. LISTEN"
 
 RESPONSE=`nc -l -p $PORT`
+if [ "$RESPONSE" != "FILE_DATA_HASH_OK" ]
+then
+	echo "ERROR 4: Archivo enviado incorrectamente (error MD5)"
+	exit 4
+fi
+
 echo "Fin de comuniación"
 
 exit 0
